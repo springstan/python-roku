@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
 import os
-
-import pytest
 
 try:
     from urllib.parse import quote_plus
@@ -13,39 +10,6 @@ from roku.util import serialize_apps
 
 
 TESTS_PATH = os.path.abspath(os.path.dirname(__file__))
-
-
-class Fauxku(Roku):
-
-    def __init__(self, *args, **kwargs):
-        super(Fauxku, self).__init__(*args, **kwargs)
-        self._calls = []
-
-    def _call(self, method, path, *args, **kwargs):
-        self._calls.append((method, path, args, kwargs))
-        return ''
-
-    def calls(self):
-        return self._calls
-
-    def last_call(self):
-        return self._calls[-1]
-
-
-@pytest.fixture
-def roku():
-    return Fauxku('0.0.0.0')
-
-
-@pytest.fixture
-def apps(roku):
-    faux_apps = [
-        Application('11', '1.0.1', 'Fauxku Channel Store', roku),
-        Application('22', '2.0.2', 'Faux Netflix', roku),
-        Application('33', '3.0.3', 'Faux YouTube', roku),
-        Application('44HL', '4.0.4', 'Faux Hulu', roku),
-    ]
-    return faux_apps
 
 
 def test_apps(mocker, roku):
@@ -122,7 +86,8 @@ def test_literal(roku):
     roku.literal(text)
 
     for i, call in enumerate(roku.calls()):
-        assert call == ('POST', '/keypress/Lit_%s' % quote_plus(text[i]), (), {})
+        assert call == \
+            ('POST', '/keypress/Lit_%s' % quote_plus(text[i]), (), {})
 
 
 def test_literal_fancy(roku):
@@ -131,7 +96,8 @@ def test_literal_fancy(roku):
     roku.literal(text)
 
     for i, call in enumerate(roku.calls()):
-        assert call == ('POST', '/keypress/Lit_%s' % quote_plus(text[i]), (), {})
+        assert call == \
+            ('POST', '/keypress/Lit_%s' % quote_plus(text[i]), (), {})
 
 
 def test_store(apps):
